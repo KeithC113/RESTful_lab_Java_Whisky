@@ -7,10 +7,7 @@ import com.codeclan.example.WhiskyTracker.repositories.WhiskyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,14 +17,20 @@ public class WhiskyController {
     @Autowired
     WhiskyRepository whiskyRepository;
 
-    @GetMapping(value = "/whiskies")
-    public ResponseEntity<List<Whisky>> getAllWhiskies(){
-        return new ResponseEntity<>(whiskyRepository.findAll(), HttpStatus.OK);
-    }
-
     @GetMapping(value = "/whiskies/{id}")
     public ResponseEntity getWhisky(@PathVariable Long id){
         return new ResponseEntity<>(whiskyRepository.findById(id), HttpStatus.OK);
+    }
+
+    @GetMapping(value = "/whiskies")
+    public ResponseEntity getAllWhiskies(
+            @RequestParam (name="year", required = false) int year){
+        if (year == 0){
+            return new ResponseEntity<>(whiskyRepository.findAll(), HttpStatus.OK);
+        } else {
+            return new ResponseEntity<List<Whisky>>(whiskyRepository.findWhiskiesByYear(year), HttpStatus.OK);
+        }
+
     }
 
 }
